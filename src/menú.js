@@ -78,23 +78,91 @@ do {
                         break;
                     case "2.2":
                         let tituloBuscado;
-                        
+                        let productoPorTitulo = producto.find(producto =>
+                            producto.titulo.includes(tituloBuscado)
+                        );
+                        if(productoPorTitulo){
+                            console.log("Producto encontrado:");
+                            console.log(productoPorTitulo);
+                        }else {
+                            console.log("No existe  ningun producto con ese titulo")
+                        }
+                        break;
                 
                     default:
-                        break;
+                        console.log("Selecciona una opcion valida");
                 }
             break;
+        //SIN TERMINAR
         case "3":
-            console.log("Has ellegido resgistrar una venta");
+            console.log("==== REGISTRAR VENTA ====");
+            let idVenta;
+            let productoVenta = productos.find(producto => 
+                producto.id == idVenta
+            );
+            if(!productoVenta){
+                console.log("No existe");
+            }else {
+                let cantidadVenta;
+                if (cantidadVenta <= 0){
+                    console.log("Debe ser mayor a 0");
+                }else if (cantidadVenta > productoVenta.stock){
+                    console.log("No hay stock suficiente");
+                }else {
+
+                }
+            }
             break;
+        //SIN TERMINAR
         case "4":
-            console.log("Has elegido reponer stock");
+            console.log("==== REPONER STOCK ====");
+            
+
             break;
+        
         case "5":
-            console.log("Has elegido ver el informe de la caja");
+            console.log("===== INFORME DE CAJA =====");
+            let productoMasVendido = productos.reduce((masVendido, producto) => {
+                let ventasActuales = unidadesVendidas[producto.id] || 0;
+                let ventasMaximas = unidadesVendidas[masVendido.id] || 0;
+                //Si no hay ventas me da 0
+                if(ventasActuales > ventasMaximas){
+                    return producto;
+                }else{
+                    return masVendido;
+                }
+            }, productos[0]);
+            if(productoMasVendido){
+                let cantidadMasVendida = unidadesVendidas[productoMasVendido.id] || 0;
+
+                if(cantidadMasVendida > 0){
+                    console.log("Producto mas vendido: ${productoMasVendido.titulo} (${cantidadMasVendida}")
+                }
+            }else {
+                console.log("No se ha vendido ningun producto");
+            }
+
+            let valorStock = productos.reduce((total, producto) => {
+                return total + (producto.precio * producto.stock);
+            })
+            let productosBajoStock = productos.filter(productos =>
+                producto.stock <= 5
+            );
+            if(productosBajoStock.length > 0){
+                console.log("Hay productos con stock bajo")
+            }else{
+                console.log("No hay productos con stock bajo")
+            }
             break;
         case "6":
-            console.log("Saliendo del menú...");
+            console.log("=== RESUMEN ===");
+            let totalUnidadesVendidas = unidadesVendidas.reduce(
+                (total, cantidad) => total + cantidad,
+                0
+            );
+
+            console.log('Unidades vendidas ${totalUnidadesVendidas}');
+            console.log("Saliendo de la aplicacion....");
             break;
     
         default:
