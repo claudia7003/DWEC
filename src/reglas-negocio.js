@@ -12,8 +12,16 @@ export const obtenerDescuentoVolumen = function (unidades) {
 };
 
 export function UmbralBajo(productos) {
-    return productos.map((producto) => {
-        const aviso = producto.stock < 3 ? "⚠️ Stock bajo" : " ";
-        return aviso;
+    return productos.map((producto) => { //Creamos un nuevo array con el .map 
+        const aviso = producto.stock < 3 ? "⚠️ Stock bajo" : " "; //Comprueba si el stock del producto el menor a 3
+        return aviso;S  //i la condición anterior es verdadera de devuelve el aviso
     });
 }
+
+//Agrega un tramo 10 unidades o más nuevo con un 20% de descuento sin romper lo que tengo, mostrar en el main
+
+export const nuevoTramo = function (unidades){
+    if (unidades >= 10) return 0.20;
+    
+}
+console.log(nuevoTramo);
