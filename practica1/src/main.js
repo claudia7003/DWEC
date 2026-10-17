@@ -3,8 +3,11 @@ import heroImg from './assets/hero.png'
 import javascriptLogo from './assets/javascript.svg'
 import viteLogo from './assets/vite.svg'
 import { setupCounter } from './counter.js'
-import './reglas-negocio.js'
-import { nuevoTramo } from './reglas-negocio.js'
+
+import { categorias } from '../categorias.js'
+import { iniciarMenu } from "./menu.js";
+
+
 
 document.querySelector('#app').innerHTML = `
 <section id="center">
