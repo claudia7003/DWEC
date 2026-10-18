@@ -23,19 +23,19 @@ export function totalTicket(lineas) {
 // Suma a las unidades que ya hay las que escribe el usuario en un prompt.
 // Si lo que escribe no es un número, las unidades se quedan como estaban.
 export function sumarUnidades(actuales, textoDelUsuario) {
-  const nuevas = actuales + textoDelUsuario;
+  const nuevas = actuales + Number(textoDelUsuario) ;
   return nuevas;
 }
 
 // Texto del stock de un producto para el listado. Si no tenemos el dato: "sin datos".
 export function stockTexto(producto) {
-  const stock = producto.stock || "sin datos";
+  const stock = producto.stock ?? "sin datos";
   return `${stock}`;
 }
 
 // Devuelve los productos ordenados de más barato a más caro (sin tocar la lista original).
 export function ordenarPorPrecio(productos) {
-  const ordenados = productos.sort((a, b) => a.precio - b.precio);
+  const ordenados = [...productos].sort((a, b) => a.precio - b.precio);
   return ordenados;
 }
 
