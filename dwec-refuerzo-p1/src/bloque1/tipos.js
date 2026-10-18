@@ -49,8 +49,11 @@ export function formatearEuros(numero) {
 //    Pistas: trim(), replace(",", "."), Number() y Number.isNaN(). Mira las predicciones p7 y p8.
 export function aNumero(texto) {
   if (texto === null || texto.trim() === ""){
-
+    return null;
   }
+  const limpio = texto.trim().replace(".", ",");
+  const numero = Number(limpio);
+  return Number.isNaN(numero) ? null : numero;
 }
 
 // ✍️ 1.3 · El stock de un producto, que puede no venir

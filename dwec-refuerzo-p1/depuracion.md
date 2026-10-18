@@ -13,32 +13,33 @@ Ejemplo de cómo se escribe una variable vista en el panel «Ámbito» (Scope): 
 
 ## Bug 1 · Añadir unidades
 
-- **Síntoma:** ____
-- **Breakpoint en:** ____
-- **Lo que vi:** ____
-- **Por qué falla:** ____
-- **Arreglo:** ____
+- **Síntoma:** Cuando añadir algo (ya sea una palabra o un numero) no se suma, se añade.
+- **Breakpoint en:** `const nuevas`
+- **Lo que vi:** Deberia salir las unidades sumadas y no añadidas
+- **Por qué falla:** Porque texto usuario lo capta como un string 
+- **Arreglo:** `Number(textoDelUsuario)`
 
 ## Bug 2 · Stock de cada producto
 
-- **Síntoma:** ____
-- **Breakpoint en:** ____
-- **Lo que vi:** ____
-- **Por qué falla:** ____
-- **Arreglo:** ____
+- **Síntoma:** Sonic tiene stock 0, deberia salir 0. 
+- **Breakpoint en:** `const stock = producto.stock || "sin datos";`
+- **Lo que vi:** Vi que cuando pulsammos ver stock, Sonic sale sin datos
+- **Por qué falla:** No es || sino ?? ya que este nos asegura que si es null o undefined utiliza sin datos
+- **Arreglo:** `const stock = producto.stock ?? "sin datos";`
 
 ## Bug 3 · Ordenar por precio
 
-- **Síntoma:** ____
-- **Breakpoint en:** ____
-- **Lo que vi:** ____
-- **Por qué falla:** ____
-- **Arreglo:** ____
+- **Síntoma:** No los ordena 
+- **Breakpoint en:** `const ordenados = productos.sort((a, b) => a.precio - b.precio);`
+- **Lo que vi:** Vi que no se ordenaba como deberia a pesar de tener el .sort
+- **Por qué falla:** Porque modifica el array original, hay que hacer una copia
+- **Arreglo:** `const ordenados = [...productos].sort((a, b) => a.precio - b.precio);`
+
 
 ## Bug 4 · Descuento por volumen
 
-- **Síntoma:** ____
-- **Breakpoint en:** ____ *(prueba un breakpoint condicional: `unidades === 4`)*
-- **Lo que vi:** ____
-- **Por qué falla:** ____
-- **Arreglo:** ____
+- **Síntoma:** El precio no se aplica correctamente 
+- **Breakpoint en:** `if (unidades > 4)`
+- **Lo que vi:** Vi que no se aplica el descuento ya que no entra en el if
+- **Por qué falla:** Deberia permitir tambien 4
+- **Arreglo:** `if (unidades >= 4) {`
