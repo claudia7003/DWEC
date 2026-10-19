@@ -28,22 +28,35 @@ export function crearMarcador() {
 //    const triplicar = crearMultiplicador(3);
 //    triplicar(4) → 12       crearMultiplicador(10)(5) → 50
 export function crearMultiplicador(factor) {
-  throw new Error("Sin hacer");
+  return function(numero){
+    return numero * factor;
+  }
 }
 
 // 🪜 3.b · Un objeto con DOS funciones que comparten una variable privada que SÍ cambia
 //    const ficha = crearPasos(2);       // avanza de 2 en 2
 //    ficha.avanzar() → 2    ficha.avanzar() → 4    ficha.posicion() → 4
 //    crearPasos().avanzar() → 1         (de 1 en 1 si no se dice nada)
-export function crearPasos(paso) {
-  throw new Error("Sin hacer");
+export function crearPasos(paso = 1) {
+  let posicion;
+    return avanzar (){
+      posicion= posicion + paso;
+      return posicion
+    },
+
+    posicion() {
+      return posicion;
+    }
 }
 
 // ✍️ 3.1 · Una función que devuelve una función que calcula un descuento
 //    const rebajas = crearDescuento(20);
 //    rebajas(50) → 40     rebajas(19.99) → 15.99     crearDescuento(0)(10) → 10
 export function crearDescuento(porcentaje) {
-  throw new Error("Sin hacer");
+  return function(precio){
+    let precioFinal = precio - (precio * porcentaje / 100);
+    return redondear(precioFinal);
+  }
 }
 
 // ✍️ 3.2 · La lista de deseos de un cliente, privada (como el marcador del ejemplo)
@@ -55,13 +68,37 @@ export function crearDescuento(porcentaje) {
 //    deseos.titulos()                  → ["Tetris"]   y es una COPIA (un push en ella no cambia la lista)
 //    Dos listas distintas no se mezclan, y el objeto devuelto solo tiene funciones.
 export function crearListaDeseos() {
-  throw new Error("Sin hacer");
+  let lista = [];
+
+  //Vamos a devolver un objeto
+  return {
+    //Con los ... hacemos una copia del array y nos permite recibir varios titulos a la vez
+    anadir(...titulos){
+      let cantidad;
+      //Tenemos que recorrer los titulos 
+      for (let titulo of titulos){
+        //El titulo es un texto y no está vacio, con trim eliminamos espacios 
+        if (typeof titulo === "string" && titulo.trim() !== ""){
+          lista = [...titulo, lista];
+          cantidad= cantidad + 1;
+        }
+      }
+      return cantidad;
+    }
+    
+  }
 }
 
 // ✍️ 3.3 · Generador de ids para productos nuevos
 //    const siguienteId = crearGeneradorId(13);
 //    siguienteId() → 13     siguienteId() → 14     siguienteId() → 15
 //    crearGeneradorId()() → 1        (empieza en 1 si no se dice nada)
-export function crearGeneradorId(inicial) {
-  throw new Error("Sin hacer");
+export function crearGeneradorId(inicial = 1) {
+  let id;
+
+  return function(){
+    let numero = id;
+    id = id + 1;
+    return numero;
+  };
 }
