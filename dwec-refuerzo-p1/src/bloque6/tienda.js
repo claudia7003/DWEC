@@ -23,7 +23,54 @@ import { buscarPorId, vender } from "../bloque5/arrays.js";
 //
 //    El catálogo recibido NO se modifica (las pruebas usan uno congelado).
 export function registrarVenta(catalogo, id, unidades) {
-  throw new Error("Sin hacer");
+  
+  //Vamos a comprobar que las unidades sean num mayor que0
+  if (!Number.isInteger(unidades) || unidades <= 0){
+    return {
+      catalogo: catalogo,
+      error: "Cantidad no válida"
+    };
+  }
+
+  //VAmos a buscar el pproducuto por su ID
+
+  const producto = buscarPorId(catalogo, id);
+  //Comprobamos que el producto exista
+  if (producto === null){
+    return {
+      catalogo: catalogo,
+      error: "No existe el producto " + id,
+    };
+  }
+
+  //Suficientes unidades en stock??
+  if(producto.stock < unidades){
+    return {
+      catalogo: catalogo,
+      error: "No hay stock suficiente, quedan:" + producto.stock
+    };
+  }
+
+  //Precio de una unidad con el descuento
+  const precioUnitario = precioFinal(producto.precio, producto.estado);
+
+  //Precio total de la venta
+  const total = redondear(precioUnitario * unidades);
+
+  //Objeto con datos
+  const venta = {
+    titulo: producto.titulo,
+    unidades: unidades,
+    precioUnitario: precioUnitario,
+    total: total,
+
+  };
+
+  //Catalogo actualizado 
+  return{
+    catalogo: vender(catalogo, id, unidades),
+    venta: venta
+  };
 }
 
 // ✍️ 6.2 · El ticket de una venta, con DESTRUCTURING del objeto venta
@@ -32,5 +79,10 @@ export function registrarVenta(catalogo, id, unidades) {
 //    ticket({ titulo: "Tetris", unidades: 1, precioUnitario: 20, total: 20 })
 //      → "Tetris · 1 ud. × 20,00 € = 20,00 €"
 export function ticket(venta) {
-  throw new Error("Sin hacer");
+  
+  //Extraemos los datos del objeto
+  const{titulo, unidades, precioUnitario, total} = venta;
+
+  //Creamos el texto para el ticket
+  return `${titulo} · ${formatearUnidades(unidades)} × ${formatearEuros(precioUnitario)} = ${formatearEuros(total)}`;
 }

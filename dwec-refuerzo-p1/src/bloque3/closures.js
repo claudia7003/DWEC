@@ -39,15 +39,15 @@ export function crearMultiplicador(factor) {
 //    crearPasos().avanzar() → 1         (de 1 en 1 si no se dice nada)
 export function crearPasos(paso = 1) {
   let posicion;
-    return avanzar (){
+    //return avanzar (){
       posicion= posicion + paso;
       return posicion
-    },
+    //},
 
-    posicion() {
+    //posicion() {
       return posicion;
     }
-}
+//}
 
 // ✍️ 3.1 · Una función que devuelve una función que calcula un descuento
 //    const rebajas = crearDescuento(20);
