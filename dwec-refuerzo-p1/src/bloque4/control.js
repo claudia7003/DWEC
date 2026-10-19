@@ -17,6 +17,7 @@ export function procesarSemaforo(colores) {
       case "verde":
         salida.push("Pasa");
         break;
+
       case "ámbar":
       case "rojo": //  dos case seguidos sin break = el mismo código para los dos
         salida.push("Frena");
@@ -38,27 +39,53 @@ export function procesarSemaforo(colores) {
 // 🪜 4.a · if / else if / else
 //    signo(5) → "positivo"     signo(-3) → "negativo"     signo(0) → "cero"
 export function signo(numero) {
-  throw new Error("Sin hacer");
+  if (numero > 0){
+    return "positivo";
+  }else if (numero < 0){
+    return "negativo";
+  }else {
+    return "cero"
+  }
 }
 
 // 🪜 4.b · Bucle for con acumulador: suma de 1 hasta n
 //    sumarHasta(4) → 10   (1 + 2 + 3 + 4)       sumarHasta(1) → 1       sumarHasta(0) → 0
 export function sumarHasta(n) {
-  throw new Error("Sin hacer");
+  let suma = 0;
+  
+  for(let i = 1; i <= n; i ++){
+    suma = suma + 1;
+  }
+  return suma;
 }
 
 // 🪜 4.c · for...of sobre un TEXTO (también se recorre letra a letra): cuenta las vocales a e i o u
 //    contarVocales("Tetris") → 2     contarVocales("AEIOU") → 5 (también mayúsculas)    contarVocales("") → 0
 //    Pista: "aeiou".includes(letra.toLowerCase())
 export function contarVocales(texto) {
-  throw new Error("Sin hacer");
+  let cantidad;
+
+  for (let letra of texto){
+    if ("aeiou".includes(letra.LowerCase())){
+      cantidad = cantidad + 1;
+    }
+  }
+  return cantidad;
 }
 
 // ✍️ 4.1 · Clasificar el stock con if / else if / else
 //    clasificarStock(0) → "agotado"     clasificarStock(2) → "stock bajo"    clasificarStock(3) → "disponible"
 //    clasificarStock(-1) → "error"      clasificarStock("5") → "error"       (solo valen números >= 0)
 export function clasificarStock(stock) {
-  throw new Error("Sin hacer");
+  if (typeof stock !== "number" || stock < 0){
+    return "error";
+  }else if (stock === 0){
+    return "agotado";
+  }else if (stock < 3){
+    return "stock bajo";
+  }else {
+    return "disponible";
+  }
 }
 
 // ✍️ 4.2 · Nombre del estado con switch y default
@@ -66,7 +93,22 @@ export function clasificarStock(stock) {
 //    "usado-caja-danada" → "Usado (caja dañada)"  "solo-cartucho" → "Solo cartucho"
 //    cualquier otra cosa → "Estado desconocido"
 export function nombreEstado(estado) {
-  throw new Error("Sin hacer");
+  switch(estado){
+    case "nuevo-precintado" :
+      return "Nuevo (precintado)";
+
+    case "usado-como-nuevo":
+      return "Usado (como nuevo)";
+
+    case "usado-caja-danada":
+      return "Usado (caja dañada)";
+
+    case "solo-cartucho":
+      return "Solo cartucho";
+
+    default:
+      return "Estado desconocido";
+  }
 }
 
 // ✍️ 4.3 · El menú de RetroStock, como el ejemplo del semáforo (bucle + switch)
@@ -77,7 +119,43 @@ export function nombreEstado(estado) {
 //    simularMenu(["1", "9", "3", "6", "2"]) → ["Ver catálogo", "Opción no válida: 9", "Registrar venta", "¡Hasta pronto!"]
 //    simularMenu(["2"])                    → ["Buscar producto", "Fin sin salir"]
 export function simularMenu(entradas) {
-  throw new Error("Sin hacer");
+  //Resultado es una lista donde guardamos las respuestas del menú
+  let resultado = [];
+  let i = 0;
+  let salir = false;
+
+  while(i < entradas.length && !salir){
+    let opcion = entradas[i];
+
+    switch (opcion){
+      case "1":
+        resultado.push("Ver catalogo");
+        break;
+
+      case "2":
+        resultado.push("Buscar producto");
+        break;
+
+      case "3":
+        resultado.push("Registrar venta");
+        break;
+
+      case "6":
+        resultado.push("¡Hasta pronto!");
+        salir = true;
+        break;
+      
+      default:
+        resultado.push("No válido");
+    }
+  
+    // Si se acaban las entradas sin un "6", se añade al final "Fin sin salir".
+
+    if (!resultado){
+      resultado.push("Fin sin salir");
+    }
+  }
+  return resultado;
 }
 
 // ✍️ 4.4 · Tabla de descuentos con un bucle for, usando descuentoVolumen (bloque 2, ya importada)
@@ -86,5 +164,15 @@ export function simularMenu(entradas) {
 //    tablaDescuentos(0) → []
 //    Pista: 0.05 × 100 da 5.000000000000001 en JavaScript: redondea con Math.round.
 export function tablaDescuentos(maxUnidades) {
-  throw new Error("Sin hacer");
+  let tabla = [];
+
+  for (let unidades = 1; unidades <= maxUnidades; unidades++){
+    let descuento = descuentoVolumen(unidades);
+    let porcentaje = Math.round(descuento * 100);
+    let textoUnidades = formatearUnidades(unidades);
+
+    //Usamos .push para ir guardando cada fila de la tabla de descuentos
+    tabla.push(textoUnidades + " →" + porcentaje + "%");
+  }
+  return tabla;
 }
