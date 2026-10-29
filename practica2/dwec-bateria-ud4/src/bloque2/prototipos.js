@@ -42,8 +42,9 @@ Object.hasOwn(ana, "presentarse");
 // ✍️ 2 · Crea un objeto cuyo PROTOTIPO sea `base` (no una copia) y que tenga una propiedad propia nombre.
 //        Lo de base (por ejemplo un método saludo) tiene que funcionar en el objeto nuevo sin copiarlo.
 export function crearDesde(base, nombre) {
-  const nombre = Object.create(base);
-  
+  const nuevo = Object.create(base);
+  nuevo.nombre = nombre;
+  return nuevo;
 }
 
 
@@ -51,5 +52,11 @@ export function crearDesde(base, nombre) {
 //        niveles({}) → 1 (Object.prototype) · niveles(Object.create(null)) → 0 · niveles(new Lector("x")) → 2
 //        (pista: Object.getPrototypeOf en un bucle)
 export function niveles(objeto) {
-  throw new Error("Sin hacer");
+  let contador = 0;
+  let actual = Object.getPrototypeOf(objeto);
+  while (actual !== null){
+    contador ++;
+    actual = Object.getPrototypeOf(actual);
+  }
+  return contador;
 }
