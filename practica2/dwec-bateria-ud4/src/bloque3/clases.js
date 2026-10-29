@@ -20,7 +20,12 @@ export class Contador {
 //        (pista: Math.hypot)
 export class Punto {
   constructor(x, y) {
-    throw new Error("Sin hacer");
+    this.x = x;
+    this.y = y;
+  }
+
+  distanciaAlOriginal(){
+    return Math.hypot(this.x, this.y);
   }
 }
 
@@ -36,13 +41,48 @@ export class Punto {
 //   - Libro.creados: cuántos libros se han creado (un contador privado y static, con un getter static).
 //   - Libro.desde({ titulo, autor, paginas }) → un Libro nuevo a partir de un objeto.
 export class Libro {
+  static #creados = 0;
+  #paginas;
+
   constructor(titulo, autor, paginas) {
-    throw new Error("Sin hacer");
-  }
+    if(typeof titulo !== "string" || titulo.trim() === "") {
+      throw new Error("El titulo es obligatorio");
+    }
+      this.titulo = titulo.trim();
+      this.autor = autor;
+      this.paginas = paginas; 
+
+      Libro.#creados++;
+
+    }
+
+    get paginas(){
+      return this.#paginas;
+    }
+    set paginas(n){
+      if(!Number.isInteger(n) || n <= 0) {
+      throw new Error("Las paginas deben ser un entero mayor que 0")        
+      }
+      this.#paginas = n;
+      
+    }
+    get esLargo(){
+      return this.paginas > 400;
+    }
+    resumen(){
+      return `${this.titulo} ${this.autor}, ${this.paginas}páginas`;
+    }
+    static get creados(){
+      return Libro.#creados;
+    }
+    static desde({titulo, autor, paginas}){
+      return new Libro(titulo, autor, paginas);
+    }
 }
 
 // ✍️ 3 · Devuelve una FUNCIÓN que, al llamarla suelta (avisar()), devuelva libro.resumen().
 //        Si devuelves libro.resumen tal cual, se pierde this. ¿Cómo lo evitas? (apartado 7.7)
 export function crearAvisador(libro) {
-  throw new Error("Sin hacer");
+  return () => this.libro;
 }
+
