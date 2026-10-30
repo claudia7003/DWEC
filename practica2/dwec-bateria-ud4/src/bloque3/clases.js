@@ -83,6 +83,6 @@ export class Libro {
 // ✍️ 3 · Devuelve una FUNCIÓN que, al llamarla suelta (avisar()), devuelva libro.resumen().
 //        Si devuelves libro.resumen tal cual, se pierde this. ¿Cómo lo evitas? (apartado 7.7)
 export function crearAvisador(libro) {
-  return () => this.libro;
+  return () => libro.resumen();
 }
 

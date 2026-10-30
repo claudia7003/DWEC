@@ -4,4 +4,5 @@ export const predicciones = {
   p2: 0, // class C { #x = 1; }; Object.keys(new C()).length
   p3: false, // class D { static n = 3; }; "n" in new D()
   p4: "function", // class L { resumen() {} }; typeof L.prototype.resumen
+  
 };
