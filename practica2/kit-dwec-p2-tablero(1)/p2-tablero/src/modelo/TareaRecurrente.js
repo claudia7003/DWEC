@@ -31,7 +31,7 @@ siguiente(){
   const limite = new Date(this.limite);
   limite.setDate(limite.getDate() + this.cadaDias);
 
-  return TareaRecurrente(this.titulo, this.cadaDias, this.prioridad, limite);
+  return new TareaRecurrente(this.titulo, this.prioridad, limite, this.cadaDias);
 }
   // 7 · Sobrescribe alCompletar(): en vez de [], devuelve [la siguiente].
   alCompletar(){
@@ -41,7 +41,7 @@ siguiente(){
   toString(){
     const stringPadre = super.toString();
 
-    return `${stringPadre}  · 🔁 cada ${this.cadaDias} días`
+    return `${stringPadre} · 🔁 cada ${this.cadaDias} días`
   }
 }
 
