@@ -3,7 +3,8 @@ import heroImg from './assets/hero.png'
 import javascriptLogo from './assets/javascript.svg'
 import viteLogo from './assets/vite.svg'
 import { setupCounter } from './counter.js'
-import { categorias } from '../categorias.js'
+import './reglas-negocio.js'
+import { nuevoTramo } from './reglas-negocio.js'
 
 document.querySelector('#app').innerHTML = `
 <section id="center">
@@ -58,5 +59,7 @@ document.querySelector('#app').innerHTML = `
 <section id="spacer"></section>
 ` 
 console.log(categorias);
+
+console.log(nuevoTramo);
 
 setupCounter(document.querySelector('#counter'))

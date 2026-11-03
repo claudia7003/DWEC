@@ -16,11 +16,11 @@ import { PrestamoError, Socio } from "../bloque5/composicion.js";
 //   disponibles()              → las descripciones de lo que NO está prestado
 //   informeVencidos(hoy)       → [{ socio: "Ana", isbn: "222" }, …]
 export class Biblioteca {
-  alta(isbn, publicacion) {
-    throw new Error("Sin hacer");
-  }
-}
 
+
+  
+
+}
 // (Para que ESLint no avise mientras no las uses)
 void PrestamoError;
 void Socio;
