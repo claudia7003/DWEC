@@ -72,7 +72,7 @@ export class Tablero {
       tarea = new Tarea(datos.titulo, datos.prioridad, datos.limite);
     }
 
-    this.columna("Por hacer").agregar(tarea);
+    this.columna("Por hacer").añadir(tarea);
     return tarea;
   }
 
@@ -81,9 +81,9 @@ export class Tablero {
 
   buscar(id){
     for(const columna of this.columnas){
-      //Buscar por id o preguntar si contiene 
-      if(columna.has(id)){
-        return columna.buscar(id);
+      const encontrada = columna.tareas.find(t => t.id === id);
+      if(columna.tiene(id)){
+        return encontrada;
     }
   }
    return null;
@@ -91,7 +91,7 @@ export class Tablero {
 
   dondeEsta(id){
     for(const columna of this.columnas){
-      if(columna.has(id)){
+      if(columna.tiene(id)){
         return columna;
     }
   }
@@ -101,50 +101,45 @@ export class Tablero {
   // mover(id, destino): Error si no existe la tarea · Error si la columna destino está llena
   //   (¡comprueba ANTES de quitarla de su columna, o se perdería!) · la mueve y la devuelve
 
-  mover(id, destino){
-    //Vamos a necesitar this.buscar(id) this.dondeEsta(id) this.columna(destino)
-    //Primero paso: Comprobaciones, Error si no existe la tarea this.buscar(id) y this.dondeEsta(id) = null
-    // Error si columna destino llena limiteWip
-    //Segundo paso: Extraer o eliminar tareas de origen, añadirla a la columna de destino, devolver la tareas con un return 
-    const colDestino = this.columna(destino);
+  //  mover(id, destino){
+  // //   //Vamos a necesitar this.buscar(id) this.dondeEsta(id) this.columna(destino)
+  // //   //Primero paso: Comprobaciones, Error si no existe la tarea this.buscar(id) y this.dondeEsta(id) = null
+  // //   // Error si columna destino llena limiteWip
+  // //   //Segundo paso: Extraer o eliminar tareas de origen, añadirla a la columna de destino, devolver la tareas con un return 
+  //    const colDestino = this.columna(destino);
 
-    if(!this.buscar(id) || this.dondeEsta(id) === null){
-      throw new Error("Error");
-    }
-    if(colDestino.llena()){
-      throw new Error("Error");
-    }
+  //    if(!this.buscar(id) || this.dondeEsta(id) === null){
+  //      throw new Error("Error");
+  //    }
+  //    if(colDestino.llena){
+  //     throw new Error("La columna destino está llena");
+  //   }
 
-    const colOrigen = this.dondeEsta(id);
-    const tarea = colOrigen.quitar(id);
-    colDestino.agregar(tarea);
-    return tarea;
-  }
+  //   const colOrigen = this.dondeEsta(id);
+  //   const tarea = colOrigen.quitar(id);
+  //   colDestino.añadir(tarea);
+  //   return tarea;
+  // }
 
   // completar(id): la mueve a «Hecho» y añade a «Por hacer» lo que devuelva tarea.alCompletar()
   //   ⚠️ Sin preguntar si es recurrente: eso es el polimorfismo
-  completar(id){ 
-    const tarea = this.mover(id, "Hecho");
-    const nuevaTarea = tarea.alCompletar();
-        if(nuevaTarea !== null){
-          this.columna("Por hacer").agregar(nuevaTarea);
-        }
-  }
+
   // resumen(hoy = new Date()): { porHacer, enCurso, hecho, vencidas }
   //   vencidas = las que estaVencida(hoy) y NO están en «Hecho»
 
   resumen(hoy = new Date()){
     const todasLasTareas = this.columnas.flatMap(columna => columna.tareas);
-   return {
-    porHacer:this.columna("Por hacer").tareas, 
-    enCurso:this.columna("En curso").tareas, 
-    hecho:this.columna("Hecho").tareas, 
+   
+    return {
+    porHacer:this.columna("Por hacer").tareas.length, 
+    enCurso:this.columna("En curso").tareas.length, 
+    hecho:this.columna("Hecho").tareas.length, 
     vencidas: todasLasTareas.filter(
-        tarea => tarea.estaVencida(hoy) && this.dondeEsta(tarea.id) !== this.columna("Hecho")
-      )
-  };
-
+        tarea => tarea.estaVencida(hoy) && this.dondeEsta(tarea.id)?.nombre !== "Hecho"
+      ).length
+    };
   }
+
   // ✍️ A5 · Reglas (vuelves a mover y completar) ─────────────────────────────────
   //   - Columna llena → ColumnaLlenaError (en vez de un Error cualquiera)
   //   - Sacar una tarea de «Hecho», o «moverla» a la columna en la que ya está →
@@ -160,15 +155,18 @@ export class Tablero {
       const colDestino = this.columna(destino);
 
       //No se puede  sacar de "Hecho"ni mover a la misma columna en la que ya está 
-      if (colOrigen === this.columna("Hecho") || colDestino === colDestino){
-        throw new MovimientoNoPermitidoError("Movimiento no permitido");
+      if (colOrigen === this.columna("Hecho") || colOrigen === colDestino){
+        throw new MovimientoNoPermitidoError(id, 
+          colOrigen.nombre, 
+          colDestino.nombre
+        );
       }
       //La columna destino no puede estar llena
-      if(colDestino.llena()){
-        throw new ColumnaLlenaError("La columna destino está llena");
+      if(colDestino.llena){
+        throw new ColumnaLlenaError(colDestino);
       }
       colOrigen.quitar(id);
-      colDestino.agregar(tarea);
+      colDestino.añadir(tarea);
       return tarea;
     }
     mover(id, destino){
@@ -176,12 +174,14 @@ export class Tablero {
     }
     //Mover a "Hecho" usando el traslado privado y gestiona la reucurrencia
     completar(id){
-      const tarea = this.#trasladar(id, "Hecho");
-      const nuevaTarea = tarea.alCompletar();
-      if(nuevaTarea !== null){
-        this.columna("Por hacer").agrega(nuevaTarea);
-      }
+    const tarea = this.#trasladar(id, "Hecho");
+
+    const nuevasTareas = tarea.alCompletar();
+
+     for (const nuevaTarea of nuevasTareas) {
+        this.columna("Por hacer").añadir(nuevaTarea);
     }
+  }
     
   // ✍️ C4 (bloque C) ────────────────────────────────────────────────────────────
   // toJSON(): { version, limiteEnCurso, columnas: { "Por hacer": [datos…], … } }
