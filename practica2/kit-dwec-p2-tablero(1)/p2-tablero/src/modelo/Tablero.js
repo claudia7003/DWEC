@@ -134,11 +134,14 @@ export class Tablero {
   //   vencidas = las que estaVencida(hoy) y NO están en «Hecho»
 
   resumen(hoy = new Date()){
+    const todasLasTareas = this.columnas.flatMap(columna => columna.tareas);
    return {
     porHacer:this.columna("Por hacer").tareas, 
     enCurso:this.columna("En curso").tareas, 
     hecho:this.columna("Hecho").tareas, 
-    vencidas: todasLasTareas.filter(tarea => tarea.estaVencida(hoy) && this.dondeEsta(tarea.id) !== "Hecho")
+    vencidas: todasLasTareas.filter(
+        tarea => tarea.estaVencida(hoy) && this.dondeEsta(tarea.id) !== this.columna("Hecho")
+      )
   };
 
   }
@@ -148,7 +151,38 @@ export class Tablero {
   //     MovimientoNoPermitidoError. Todo se comprueba ANTES de tocar nada.
   //   Pista: mover y completar hacen casi lo mismo. Un método privado #trasladar(id, destino)
   //   con las comprobaciones evita escribirlas dos veces.
+    #trasladar(id, destino){
+      const tarea = this.buscar(id);
+      if(!tarea){
+        throw new Error("NO existe la tarea con id" + id);
+      }
+      const colOrigen = this.dondeEsta(id);
+      const colDestino = this.columna(destino);
 
+      //No se puede  sacar de "Hecho"ni mover a la misma columna en la que ya está 
+      if (colOrigen === this.columna("Hecho") || colDestino === colDestino){
+        throw new MovimientoNoPermitidoError("Movimiento no permitido");
+      }
+      //La columna destino no puede estar llena
+      if(colDestino.llena()){
+        throw new ColumnaLlenaError("La columna destino está llena");
+      }
+      colOrigen.quitar(id);
+      colDestino.agregar(tarea);
+      return tarea;
+    }
+    mover(id, destino){
+      return this.#trasladar(id, destino);
+    }
+    //Mover a "Hecho" usando el traslado privado y gestiona la reucurrencia
+    completar(id){
+      const tarea = this.#trasladar(id, "Hecho");
+      const nuevaTarea = tarea.alCompletar();
+      if(nuevaTarea !== null){
+        this.columna("Por hacer").agrega(nuevaTarea);
+      }
+    }
+    
   // ✍️ C4 (bloque C) ────────────────────────────────────────────────────────────
   // toJSON(): { version, limiteEnCurso, columnas: { "Por hacer": [datos…], … } }
   //   JSON.stringify(tablero) lo llama solo. Sin él sale "{}": los # no se ven. Usa aDatos.
