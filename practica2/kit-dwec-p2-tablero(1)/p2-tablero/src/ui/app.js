@@ -43,8 +43,32 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   //   - [data-dato="vencidas"]: las vencidas de tablero.resumen(ahora)
   //   La fecha de hoy: const ahora = hoy ?? new Date();  (los tests pasan una fija)
   function pintar() {
-    throw new Error("Sin hacer");
+    //Obtenemos la fecha que utilizaremos 
+    const ahora = hoy ?? new Date();
+    //Recorreremos las tres columnas del tablero
+    for (const columna of tablero.columnas){
+      //Buscamos la zona HTML correspondiente a la columna 
+      const zona = raiz.querySelector(`[data-columna="${columna.nombre}"]`);
+      //Buscamos la lista de tareas de esa columna 
+      const lista = zona.querySelector(".lista");
+      //Buscamos el contador de esa columna
+      const contador = zona.querySelector(".contador");
+
+      pintarLista(lista, columna.ordenadas(), ahora);
+    }
+
   }
+
+      // //Busca dentro de raiz el elemento cuyo atributo data-columna tenga el mismo nombre que la columna que 
+    // //estoy recorriendo 
+
+    // raiz.querySelector(`[data-columna="${columna.nombre}"]`);
+
+    // //Busca solamente dentro de la columna que hemos encontrado
+    // zona.querySelector(".lista");
+    // zona.querySelector(".contador");
+
+  //querySelector() busca elementos y textContent cambia el texto que muestran
 
   // 👀 Resuelto: avisar("texto") enseña el aviso; avisar("") lo esconde
   function avisar(mensaje) {
@@ -63,7 +87,7 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   //   no se crea nada. Si no, tablero.crearTarea(datos) (como un cambio más) y form.reset().
 
   pintar();
-  return { pintar };
+  return {pintar};
 }
 
 (void ACCIONES, ErrorTablero, delegar, leerFormulario, mostrarErrores, pintarLista); // (borra esta línea cuando los uses)
