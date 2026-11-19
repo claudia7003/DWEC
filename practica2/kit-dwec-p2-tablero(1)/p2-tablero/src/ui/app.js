@@ -125,12 +125,20 @@ function pintar() {
     aviso.hidden = mensaje === "";
   }
 
+function cambiar(hacer) {
+  
+}
   // ✍️ B5 · UN listener, puesto UNA vez aquí (nunca dentro de pintar): clic en los botones de las
   //   tarjetas, con delegar sobre `columnas`. empezar → «En curso», volver → «Por hacer», completar.
   //   Tras cada cambio que sale bien: avisar(""), pintar() y alCambiar(tablero).
   //   Si el tablero lanza un ErrorTablero → avisar(error.message) y no se repinta.
   //   Cualquier otro error → se relanza (es un fallo del programa).
   //   Pista: una función cambiar(accion) con el try/catch te sirve también para el B6.
+  
+  //Hay que usar delegar() para crear un Listener 
+
+  
+
 
   // ✍️ B6 · submit de `form`: preventDefault, leerFormulario, validar y mostrarErrores. Si hay errores,
   //   no se crea nada. Si no, tablero.crearTarea(datos) (como un cambio más) y form.reset().
