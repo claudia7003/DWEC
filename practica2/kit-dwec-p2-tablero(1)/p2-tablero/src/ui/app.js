@@ -42,22 +42,71 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   //   - [data-dato="progreso"]: hechas ÷ total en %, redondeado (con el tablero vacío, 0 %)
   //   - [data-dato="vencidas"]: las vencidas de tablero.resumen(ahora)
   //   La fecha de hoy: const ahora = hoy ?? new Date();  (los tests pasan una fija)
-  function pintar() {
-    //Obtenemos la fecha que utilizaremos 
-    const ahora = hoy ?? new Date();
-    //Recorreremos las tres columnas del tablero
-    for (const columna of tablero.columnas){
-      //Buscamos la zona HTML correspondiente a la columna 
-      const zona = raiz.querySelector(`[data-columna="${columna.nombre}"]`);
-      //Buscamos la lista de tareas de esa columna 
-      const lista = zona.querySelector(".lista");
-      //Buscamos el contador de esa columna
-      const contador = zona.querySelector(".contador");
+function pintar() {
 
-      pintarLista(lista, columna.ordenadas(), ahora);
+    // Obtenemos la fecha que utilizaremos
+    const ahora = hoy ?? new Date();
+
+    // Recorremos las tres columnas del tablero
+    for (const columna of tablero.columnas) {
+
+        // Buscamos la zona HTML correspondiente
+        const zona = raiz.querySelector(
+            `[data-columna="${columna.nombre}"]`
+        );
+
+        // Buscamos la lista y el contador
+        const lista = zona.querySelector(".lista");
+        const contador = zona.querySelector(".contador");
+
+        // Pintamos las tareas ordenadas
+        pintarLista(lista, columna.ordenadas(), ahora);
+
+        // Actualizamos el contador
+        const cantidad = columna.tareas.length;
+
+        if (columna.limiteWip === null) {
+            contador.textContent = `(${cantidad})`;
+        } else {
+            contador.textContent = `(${cantidad}/${columna.limiteWip})`;
+        }
+
+        // Creamos los botones de cada tarjeta
+        const tarjetas = lista.querySelectorAll(".tarjeta");
+
+        for (const tarjeta of tarjetas) {
+
+            for (const [texto, accion] of ACCIONES[columna.nombre]) {
+
+                const boton = document.createElement("button");
+
+                boton.type = "button";
+                boton.dataset.accion = accion;
+                boton.textContent = texto;
+
+                tarjeta.append(boton);
+            }
+        }
     }
 
-  }
+    // Obtenemos los datos del resumen
+    const datos = tablero.resumen(ahora);
+
+    // Calculamos el total de tareas
+    const total = datos.porHacer + datos.enCurso + datos.hecho;
+
+    // Calculamos el progreso evitando dividir entre cero
+    const progreso = total === 0
+        ? 0
+        : Math.round(datos.hecho / total * 100);
+
+    // Mostramos el progreso
+    raiz.querySelector('[data-dato="progreso"]').textContent = `${progreso} %`;
+
+    // Mostramos las tareas vencidas
+    raiz.querySelector('[data-dato="vencidas"]').textContent = datos.vencidas;
+}
+
 
       // //Busca dentro de raiz el elemento cuyo atributo data-columna tenga el mismo nombre que la columna que 
     // //estoy recorriendo 
