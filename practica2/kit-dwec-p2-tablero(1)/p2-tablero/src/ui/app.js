@@ -21,8 +21,32 @@ const ACCIONES = {
 //   - cadaDias (si viene): entero mayor que 0. Si es correcto pero no hay limite, el error va
 //     en «limite»: una tarea que se repite necesita fecha límite
 export function validar(datos) {
-  throw new Error("Sin hacer");
+  const errores = {} 
+  //Comprobar el titulo
+  if (datos.titulo === "" || datos.titulo.length > 80) {
+        errores.titulo = "El título es obligatorio y no puede superar los 80 caracteres";
+    }
+
+    // Comprobar cadaDias
+    if (datos.cadaDias !== undefined) {
+        if (!Number.isInteger(datos.cadaDias) || datos.cadaDias <= 0) {
+            errores.cadaDias = "Debe ser un número entero mayor que 0";
+        }
+    }
+
+    // Comprobar limite
+    if (
+        Number.isInteger(datos.cadaDias) &&
+        datos.cadaDias > 0 &&
+        datos.limite === null
+    ) {
+        errores.limite = "Una tarea que se repite necesita fecha límite";
+    }
+
+    return errores;
 }
+
+
 
 /**
  * Arranca la interfaz dentro de raiz (el <main id="app">). Los listeners se ponen UNA vez aquí;
@@ -126,18 +150,69 @@ function pintar() {
   }
 
 function cambiar(hacer) {
-  
+    try {
+        hacer();
+        avisar("");
+        pintar();
+        alCambiar(tablero);
+    } catch (error) {
+        if (error instanceof ErrorTablero) {
+            avisar(error.message);
+        } else {
+            throw error;
+        }
+    }
 }
+
   // ✍️ B5 · UN listener, puesto UNA vez aquí (nunca dentro de pintar): clic en los botones de las
   //   tarjetas, con delegar sobre `columnas`. empezar → «En curso», volver → «Por hacer», completar.
   //   Tras cada cambio que sale bien: avisar(""), pintar() y alCambiar(tablero).
   //   Si el tablero lanza un ErrorTablero → avisar(error.message) y no se repinta.
   //   Cualquier otro error → se relanza (es un fallo del programa).
   //   Pista: una función cambiar(accion) con el try/catch te sirve también para el B6.
-  
-  //Hay que usar delegar() para crear un Listener 
 
-  
+  //Hay que usar delegar() para crear un Listener 
+ddelegar(columnas, "click", "button[data-accion]", (boton, evento) => {
+    const accion = boton.dataset.accion;
+    const tarjeta = boton.closest(".tarjeta");
+    const id = tarjeta.dataset.id;
+
+    cambiar(() => {
+        switch (accion) {
+            case "empezar":
+                tablero.empezar(id);
+                break;
+
+            case "volver":
+                tablero.volver(id);
+                break;
+
+            case "completar":
+                tablero.completar(id);
+                break;
+        }
+    });
+});
+
+form.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+
+    const datos = leerFormulario(form);
+
+    const errores = validar(datos);
+
+    mostrarErrores(form, errores);
+
+    if (Object.keys(errores).length > 0) {
+        return;
+    }
+
+    cambiar(() => tablero.crearTarea(datos));
+
+    form.reset();
+});
+
+    // delegar(contenedor, tipo, selector, manejador)
 
 
   // ✍️ B6 · submit de `form`: preventDefault, leerFormulario, validar y mostrarErrores. Si hay errores,
@@ -145,6 +220,9 @@ function cambiar(hacer) {
 
   pintar();
   return {pintar};
+
 }
 
-(void ACCIONES, ErrorTablero, delegar, leerFormulario, mostrarErrores, pintarLista); // (borra esta línea cuando los uses)
+
+
+// (borra esta línea cuando los uses)
