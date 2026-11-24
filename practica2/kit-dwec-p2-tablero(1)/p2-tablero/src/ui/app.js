@@ -23,7 +23,7 @@ const ACCIONES = {
 export function validar(datos) {
   const errores = {} 
   //Comprobar el titulo
-  if (datos.titulo === "" || datos.titulo.length > 80) {
+  if (datos.titulo.trim() || datos.titulo.length > 80) {
         errores.titulo = "El título es obligatorio y no puede superar los 80 caracteres";
     }
 
@@ -148,7 +148,7 @@ function pintar() {
     aviso.textContent = mensaje;
     aviso.hidden = mensaje === "";
   }
-
+  
 function cambiar(hacer) {
     try {
         hacer();
@@ -172,19 +172,19 @@ function cambiar(hacer) {
   //   Pista: una función cambiar(accion) con el try/catch te sirve también para el B6.
 
   //Hay que usar delegar() para crear un Listener 
-ddelegar(columnas, "click", "button[data-accion]", (boton, evento) => {
+delegar(columnas, "click", "button[data-accion]", (boton, evento) => {
     const accion = boton.dataset.accion;
     const tarjeta = boton.closest(".tarjeta");
-    const id = tarjeta.dataset.id;
+    const id = Number(tarjeta.dataset.id);
 
     cambiar(() => {
         switch (accion) {
             case "empezar":
-                tablero.empezar(id);
+                tablero.mover(id, "En curso");
                 break;
 
             case "volver":
-                tablero.volver(id);
+                tablero.mover(id, "Por hacer");
                 break;
 
             case "completar":
@@ -207,9 +207,11 @@ form.addEventListener("submit", (evento) => {
         return;
     }
 
-    cambiar(() => tablero.crearTarea(datos));
+    const resultado = cambiar(() => tablero.crearTarea(datos));
 
-    form.reset();
+    if (resultado) {
+        form.reset();
+    }
 });
 
     // delegar(contenedor, tipo, selector, manejador)
