@@ -23,9 +23,8 @@ const ACCIONES = {
 export function validar(datos) {
   const errores = {} 
   //Comprobar el titulo
-  if (datos.titulo.trim() || datos.titulo.length > 80) {
-        errores.titulo = "El título es obligatorio y no puede superar los 80 caracteres";
-    }
+  if (!datos.titulo.trim() || datos.titulo.length > 80) {
+        errores.titulo = "El título es obligatorio y no puede superar los 80 caracteres";    }
 
     // Comprobar cadaDias
     if (datos.cadaDias !== undefined) {
@@ -155,9 +154,12 @@ function cambiar(hacer) {
         avisar("");
         pintar();
         alCambiar(tablero);
+        return true;
+
     } catch (error) {
         if (error instanceof ErrorTablero) {
             avisar(error.message);
+            return false;
         } else {
             throw error;
         }
