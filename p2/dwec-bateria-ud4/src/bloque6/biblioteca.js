@@ -15,11 +15,55 @@ import { PrestamoError, Socio } from "../bloque5/composicion.js";
 //   devolver(isbn)             → PrestamoError si no está prestado
 //   disponibles()              → las descripciones de lo que NO está prestado
 //   informeVencidos(hoy)       → [{ socio: "Ana", isbn: "222" }, …]
+
 export class Biblioteca {
+  #catalogo = new Map();
+  #prestados = new Map();
+  #socios = new Map();
+
   alta(isbn, publicacion) {
-    throw new Error("Sin hacer");
+    if (this.#catalogo.has(isbn)) throw new PrestamoError(`Ya existe ${isbn}`, isbn);
+    this.#catalogo.set(isbn, publicacion);
+  }
+
+  registrar(nombre, maximo = 3) {
+    const socio = new Socio(nombre, maximo);
+    this.#socios.set(nombre, socio);
+    return socio;
+  }
+
+  prestar(isbn, nombre, hoy) {
+    const publicacion = this.#catalogo.get(isbn);
+    if (!publicacion) throw new PrestamoError(`No existe ${isbn}`, isbn);
+    if (this.#prestados.has(isbn)) throw new PrestamoError(`${isbn} ya está prestado`, isbn);
+    const socio = this.#socios.get(nombre);
+    if (!socio) throw new PrestamoError(`No existe el socio ${nombre}`, isbn);
+    socio.prestar(isbn, hoy, publicacion.diasPrestamo());
+    this.#prestados.set(isbn, nombre);
+  }
+
+  devolver(isbn) {
+    const nombre = this.#prestados.get(isbn);
+    if (!nombre) throw new PrestamoError(`${isbn} no está prestado`, isbn);
+    this.#socios.get(nombre).devolver(isbn);
+    this.#prestados.delete(isbn);
+  }
+
+  disponibles() {
+    return [...this.#catalogo]
+      .filter(([isbn]) => !this.#prestados.has(isbn))
+      .map(([, p]) => p.descripcion());
+  }
+
+  informeVencidos(hoy) {
+    const informe = [];
+    for (const socio of this.#socios.values()) {
+      for (const isbn of socio.vencidos(hoy)) informe.push({ socio: socio.nombre, isbn });
+    }
+    return informe;
   }
 }
+
 
 // (Para que ESLint no avise mientras no las uses)
 void PrestamoError;
