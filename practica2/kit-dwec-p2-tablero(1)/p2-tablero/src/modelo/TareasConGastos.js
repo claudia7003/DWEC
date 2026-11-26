@@ -1,6 +1,6 @@
 
 import { Tarea } from "./Tarea.js";
-//import { PresupuestoSuperadoError } from "./errores.js";
+import { PresupuestoSuperadoError } from "./errores.js";
 
 export class TareaConGastos extends Tarea {
   #presupuesto;
