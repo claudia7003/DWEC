@@ -227,6 +227,31 @@ form.addEventListener("submit", (evento) => {
 
 }
 
+    const crear = (etiqueta, datos) => Object.assign(document.createElement(etiqueta), datos);
 
+    function crearFormulario(tarea) {
+
+        const form = crear("form", { noValidate: true });
+    
+        form.dataset.form = "urgencia";
+
+        const etiqueta = crear("label", {
+
+            textContent: `Urgencia (1 baja, 2 media, 3 alta) de «${tarea.titulo}»`,
+        });
+
+        etiqueta.append(crear("input", { name: "urgencia", type: "number", value: tarea.peso + 1 }));
+    
+        const error = crear("p", { className: "error" });
+
+        error.dataset.errorDe = "urgencia";
+
+        const enviar = crear("button", { type: "submit", textContent: "Guardar" });
+
+        form.append(etiqueta, error, enviar, crearBoton("Cancelar", "cancelar"));
+
+        return form;
+
+    }
 
 // (borra esta línea cuando los uses)

@@ -182,6 +182,26 @@ export class Tablero {
         this.columna("Por hacer").añadir(nuevaTarea);
     }
   }
+
+  //CREACION NUEVA Crea y devuelve una tarea con gastos siempre que venga con presupuesto
+  //
+    crearTarea({titulo, prioridad, limite, presupuesto}){
+      let tarea;
+      //Siempre que SI tengamos presupuestos creamos una tarea nueva
+      if (presupuesto !== undefined) {
+      tarea = new TareaConGastos(titulo, prioridad, limite, presupuesto);
+      } else if (cadaDias !== undefined) {
+          //TareaRecurrente
+
+      } else {
+        //Tarea -- normal
+        //comprobarMov()
+        //
+    }
+    return tarea;
+  }
+
+
     
   // ✍️ C4 (bloque C) ────────────────────────────────────────────────────────────
   // toJSON(): { version, limiteEnCurso, columnas: { "Por hacer": [datos…], … } }

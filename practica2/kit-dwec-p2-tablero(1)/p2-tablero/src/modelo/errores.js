@@ -33,4 +33,16 @@ export class MovimientoNoPermitidoError extends ErrorTablero{
         this.desde = desde;
         this.hasta = hasta;
     }
+
+
+}
+
+//Añadido nuevo
+export class PresupuestoSuperadoError extends Errortablero{
+    constructor(gastado, presupuesto){
+        super(`Gastados ${gastado} € de ${presupuesto} €`);
+        this.name = PresupuestoSuperadoError;
+        this.presupuesto = presupuesto 
+        this.gastado = gastado;
+    }
 }

@@ -7,6 +7,7 @@ export function crearTarjeta(tarea, hoy = new Date()) {
   tarjeta.classList.add("tarjeta", `tarjeta--${tarea.prioridad}`);
   tarjeta.classList.toggle("tarjeta--vencida", tarea.estaVencida(hoy));
   tarjeta.dataset.id = tarea.id; // en el HTML: data-id="3" (siempre texto)
+  
 
   const titulo = document.createElement("h3");
   titulo.textContent = tarea.titulo; // textContent, NUNCA innerHTML con lo que escribe el usuario
@@ -46,4 +47,5 @@ export function pintarLista(contenedor, tareas, hoy = new Date()) {
   
    return contenedor.replaceChildren(...elementos);
 
+   
 }
