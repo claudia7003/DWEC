@@ -3,8 +3,8 @@
 // Luego: docker compose run --rm web npm run comprobar 1  → te dice el PORQUÉ de las que aciertas y una pista de las que fallas.
 // Para probar de verdad: docker compose up → botón «Probar», o en la consola del navegador (F12).
 export const predicciones = {
-  p1: undefined, // <ul><li>a</li><li>b</li><li>c</li></ul> · ul.children.length
-  p2: undefined, // <p>Hola</p> · p.childNodes.length
-  p3: undefined, // <ul><li>a</li></ul> · const vivos = ul.children; ul.append(document.createElement("li")); vivos.length
-  p4: undefined, // document.createElement("div").tagName
+  p1: 3, // <ul><li>a</li><li>b</li><li>c</li></ul> · ul.children.length
+  p2: 1, // <p>Hola</p> · p.childNodes.length
+  p3: 2, // <ul><li>a</li></ul> · const vivos = ul.children; ul.append(document.createElement("li")); vivos.length
+  p4: "DIV", // document.createElement("div").tagName
 };
