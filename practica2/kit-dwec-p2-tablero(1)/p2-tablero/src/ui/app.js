@@ -16,6 +16,38 @@ const ACCIONES = {
   Hecho: [],
 };
 
+// Devuelve el mensaje de error, o "" si está bien
+    function revisar(valor, tarea, tablero, hoy) {
+        // TU TURNO: las dos comprobaciones del punto 4 del enunciado, con sus mensajes EXACTOS
+        //Si el valor no es numero entero de 1 a 3 -- Escribe un numero entero de 1 a 3
+        if(!Number.isInteger(valor) && valor < 1 && valor > 3){
+            throw new RangeError("Escribe un numero entero de 1 a 3");
+        }
+        const nuevaPrioridad = Tarea.PRIORIDADES[urgencia - 1];
+        if(nuevaPrioridad === tarea.prioridad){
+            throw new RangeError("Ya tiene esa urgencia");
+        }
+        
+
+    }
+
+    function aplicar(tablero, tarea, valor) {
+        try{
+            tablero.mover(tarea.id, "En curso"); 
+            tarea.prioridad = nuevaPrioridad;
+
+        }catch(error){
+            if (error instanceof ErrorTablero){
+                document.querySelector('#aviso').textContent = error.message;
+                return;
+            }
+            throw error;
+        }
+   // PRIMERO mover: si «En curso» está llena, lanza y no se ha tocado nada
+  // TU TURNO: cambia el dato de la tarea
+
+    }
+
 // ✍️ B6 · validar(datos) → { campo: "mensaje" } con los errores (objeto vacío si todo está bien)
 //   - titulo: obligatorio y como mucho 80 caracteres
 //   - cadaDias (si viene): entero mayor que 0. Si es correcto pero no hay limite, el error va
@@ -45,7 +77,13 @@ export function validar(datos) {
     return errores;
 }
 
-
+function crearBoton(texto, accion) {
+  const boton = document.createElement("button");   // 1. crea un <button> vacío (aún no está en la página)
+  boton.type = "button";                              // 2. type="button": así NO envía el formulario
+  boton.textContent = texto;                          // 3. el texto que se ve
+  boton.dataset.accion = accion;                      // 4. data-accion="…": lo que lee tu listener de clics
+  return boton;                                       // 5. lo devuelve; quien la llama decide dónde ponerlo (append)
+}
 
 /**
  * Arranca la interfaz dentro de raiz (el <main id="app">). Los listeners se ponen UNA vez aquí;
@@ -58,6 +96,22 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   const columnas = raiz.querySelector("#columnas");
   const resumen = raiz.querySelector("#resumen");
 
+    //CAMBIOS NUEVOS
+  tableroEl.addEventListener('click', (e) => {
+    const boton = e.target.closest('[data-accion]');
+    if (!boton) return;
+    if (boton.dataset.accion === 'urgencia') abrirFormularioUrgencia(boton);
+    // ...tus otras acciones siguen igual
+    });
+
+    tablero.addEventListener('submit', (e) => {
+    const form = e.target.closest('form[data-form="urgencia"]');
+    if (!form) return;
+    e.preventDefault(); 
+    guardarUrgencia(form);
+    });
+
+
   // ✍️ B4 · pintar(): deja la página igual que el modelo cada vez que se llama, y NO pone listeners
   //   - cada columna ([data-columna="…"]): sus tareas en el orden de ordenadas(), con pintarLista en su
   //     .lista, y en cada .tarjeta sus botones según ACCIONES: <button type="button" data-accion="…">
@@ -66,6 +120,9 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   //   - [data-dato="vencidas"]: las vencidas de tablero.resumen(ahora)
   //   La fecha de hoy: const ahora = hoy ?? new Date();  (los tests pasan una fija)
 function pintar() {
+
+    if (columna.nombre === "Por hacer" && tablero.buscar(Number(tarjeta.dataset.id)).limite)
+  tarjeta.append(crearBoton("Cambiar urgencia y empezar", "urgencia"));
 
     // Obtenemos la fecha que utilizaremos
     const ahora = hoy ?? new Date();
@@ -179,6 +236,22 @@ delegar(columnas, "click", "button[data-accion]", (boton, evento) => {
     const tarjeta = boton.closest(".tarjeta");
     const id = Number(tarjeta.dataset.id);
 
+    //En el de button[data-accion] PUNTO 2
+    if (accion === "urgencia") {
+        columnas.querySelector("form")?.remove();
+        const tarea = buscarTareaPorId(id); 
+            if (!tarea) return;
+        const formulario = crearFormulario(tarea);
+        tarjeta.append(formulario);
+        formulario.querySelector("input, select, textarea")?.focus();
+  // cierra el formulario que haya abierto: columnas.querySelector("form")?.remove()
+  // TU TURNO: añade crearFormulario(tarea) a ESA tarjeta y pon el foco en su input
+    return;   // abrir no cambia nada: ni alCambiar ni repintar
+    }
+    if (accion === "cancelar") return columnas.querySelector("form")?.remove();
+
+
+
     cambiar(() => {
         switch (accion) {
             case "empezar":
@@ -195,6 +268,17 @@ delegar(columnas, "click", "button[data-accion]", (boton, evento) => {
         }
     });
 });
+
+//NUEVO DELEGAR
+delegar(columnas, "submit", "form", (formulario, evento) => {
+  evento.preventDefault();                                    // sin recargar la página
+  const tarea = tablero.buscar(Number(formulario.closest(".tarjeta").dataset.id));
+  const valor = formulario.elements.urgencia.value.trim();     // SIEMPRE un string
+  const mensaje = revisar(valor, tarea, tablero, hoy ?? new Date());
+  mostrarErrores(formulario, { urgencia: mensaje });          // pinta o borra el mensaje bajo el campo
+  if (mensaje === "") cambiar(() => aplicar(tablero, tarea, valor));
+});
+
 
 form.addEventListener("submit", (evento) => {
     evento.preventDefault();
@@ -225,35 +309,40 @@ form.addEventListener("submit", (evento) => {
   pintar();
   return {pintar};
 
-  
+
 
 }
 
+
+
+    //VIENE DADO
     const crear = (etiqueta, datos) => Object.assign(document.createElement(etiqueta), datos);
+
 
     function crearFormulario(tarea) {
 
         const form = crear("form", { noValidate: true });
-    
+
         form.dataset.form = "urgencia";
 
         const etiqueta = crear("label", {
 
-            textContent: `Urgencia (1 baja, 2 media, 3 alta) de «${tarea.titulo}»`,
-        });
+            textContent: `Urgencia (1 baja, 2 media, 3 alta) de «${tarea.titulo}»`, 
+         });
+  
+         etiqueta.append(crear("input", { name: "urgencia", type: "number", value: tarea.peso + 1 }));
+  
+         const error = crear("p", { className: "error" });
+  
+         error.dataset.errorDe = "urgencia";
+  
+         const enviar = crear("button", { type: "submit", textContent: "Guardar" });
+  
+         form.append(etiqueta, error, enviar, crearBoton("Cancelar", "cancelar"));
+  
+         return form;
 
-        etiqueta.append(crear("input", { name: "urgencia", type: "number", value: tarea.peso + 1 }));
-    
-        const error = crear("p", { className: "error" });
+        }
 
-        error.dataset.errorDe = "urgencia";
-
-        const enviar = crear("button", { type: "submit", textContent: "Guardar" });
-
-        form.append(etiqueta, error, enviar, crearBoton("Cancelar", "cancelar"));
-
-        return form;
-
-    }
 
 // (borra esta línea cuando los uses)
