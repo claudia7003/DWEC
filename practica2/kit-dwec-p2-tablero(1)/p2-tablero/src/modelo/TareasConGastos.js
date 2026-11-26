@@ -40,13 +40,11 @@ export class TareaConGastos extends Tarea {
         this.#gastos.push({ concepto, importe });
     }
 
-    comprobarMovimiento(destino) {
-        super.comprobarMovimiento(destino);
-        const gastado = this.#gastos();
-        if (destino === 'Hecho' && gastado > this.#presupuesto) {
-            throw new PresupuestoSuperadoError(gastado, this.#presupuesto);
-        }
-    }
+    comprobarPaso(desde, hasta) {
+        const gastado = this.#gastos.reduce((suma, g) => suma + g.importe, 0);
+            if (hasta === "Hecho" && gastado > this.#presupuesto)
+                throw new PresupuestoSuperadoError(gastado, this.#presupuesto);
+            }
 
   }
 

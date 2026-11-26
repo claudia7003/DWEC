@@ -8,6 +8,12 @@ export function crearTarjeta(tarea, hoy = new Date()) {
   tarjeta.classList.toggle("tarjeta--vencida", tarea.estaVencida(hoy));
   tarjeta.dataset.id = tarea.id; // en el HTML: data-id="3" (siempre texto)
   
+  //Boton nuevo en tarjeta con fecha limite
+  if (tarea.estado === 'Por hacer' && tarea.limite) {
+
+    tarjeta.append(crearBoton('Cambiar urgencia y empezar', 'urgencia'));
+
+  }
 
   const titulo = document.createElement("h3");
   titulo.textContent = tarea.titulo; // textContent, NUNCA innerHTML con lo que escribe el usuario

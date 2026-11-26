@@ -225,6 +225,8 @@ form.addEventListener("submit", (evento) => {
   pintar();
   return {pintar};
 
+  
+
 }
 
     const crear = (etiqueta, datos) => Object.assign(document.createElement(etiqueta), datos);

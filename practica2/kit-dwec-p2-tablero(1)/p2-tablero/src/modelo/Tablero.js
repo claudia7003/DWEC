@@ -170,7 +170,11 @@ export class Tablero {
       return tarea;
     }
     mover(id, destino){
+      const origen = this.dondeEsta(id);
+      const tarea = this.buscar(id);
+      tarea.comprobarPaso(origen.nombre, destino);
       return this.#trasladar(id, destino);
+
     }
     //Mover a "Hecho" usando el traslado privado y gestiona la reucurrencia
     completar(id){
