@@ -14,7 +14,7 @@ export function isbnDe(elemento) {
 // 🪜 1 · Pone la clase destacado si no la tiene y la quita si la tiene. Devuelve si ha quedado puesta.
 //        (pista: classList tiene un método que hace justo eso y devuelve true/false)
 export function alternarDestacado(tarjeta) {
-  throw new Error("Sin hacer");
+  return tarjeta.classList.toggle("destacado");
 }
 
 // ✍️ TU TURNO ─────────────────────────────────────────────────────────────────
